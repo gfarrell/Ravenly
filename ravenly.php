@@ -19,6 +19,8 @@ class Ravenly {
             if($webauth->success()) {
                 Ravenly::is_logged_in = true;
             }
+
+            Session::set('ucam_webauth_crsid', $webauth->principal());
         }
 
         return $this->authenticate(Ravenly::getUser());
