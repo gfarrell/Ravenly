@@ -69,7 +69,21 @@ class Ravenly {
 
         if(is_null($user)) {
             $class = Config::get('ravenly::auth.model') || '\Ravenly\Models\RavenUser';
-            $user = new $class(Session::get('ucam_webauth_crsid'));
+            $crsid = Session::get('ucam_webauth_crsid');
+            
+            // Now we see if we should create a new user, or fetch an old one
+            $exists = call_user_func($class.'::exists', $crsid);
+            if(!$exists) {
+                $user = new $class(array('crsid'=>$crsid), false);
+
+                if(Config::get('ravenly::auth.autocreate')) {
+                    $user->save();
+                }
+            } else {
+                $user = call_user_func($class.'::where_crsid', $crsid)->first();
+            }
+
+            $user->fillFromLookup();
         }
         
         return $user;
