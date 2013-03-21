@@ -30,8 +30,38 @@ class Ravenly {
 
     }
 
-    public static function authenticate($user) {
+    public static function authenticate($user, $conditions = array()) {
+        // If no user, then fail auth
+        if(!$user) return false;
 
+        // Get auth conditions
+        $c = Config::get('ravenly::auth.conditions');
+        if(!is_array($c)) {
+            $c = array_merge($c, $conditions);
+        }
+
+        // Check crsid conditions
+        if(array_key_exists('crsid', $c) && is_array($c['crsid'])) {
+            if(!in_array($user->crsid, $c['crsid'])) return false;
+        }
+
+        // Check College conditions
+        if(array_key_exists('collegecode', $c) && is_array($c['collegecode'])) {
+            if(!in_array($user->collegecode, $c['collegecode'])) return false;
+        }
+
+        // Check if in the DB (if necessary)
+        if(array_key_exists('force_db', $c)) {
+            if(!$user->exists && $c['force_db']) return false;
+        }
+
+        // Check user group conditions
+        if(array_key_exists('group', $c) && is_array($c['group'])) {
+            return $user->inGroups($c['group']));
+        }
+
+        // If nothing fails, then all is good
+        return true;
     }
 
     public static function getUser() {
