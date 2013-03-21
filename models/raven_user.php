@@ -11,6 +11,13 @@ class RavenUser extends Eloquent{
         }
     }
 
+    /* --- Class Methods --- */
+
+    /**
+     * Looks up a user by crsid
+     * @param  string $crsid user crsid
+     * @return array         user properties from ldap
+     */
     public static function lookup($crsid) {
         $u = \Ravenly\Lib\LDAP::search($crsid, 'uid');
         return count($u) > 0 ? $u[0] : null;
