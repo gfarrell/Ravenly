@@ -1,6 +1,10 @@
 <?php
 namespace Ravenly;
 
+use Log;
+use Config;
+use Session;
+
 class Ravenly {
     protected static $is_logged_in = false;
     public static $salt = '4sil42dtkazgiun7a05ex6p2cgq0oj32';
