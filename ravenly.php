@@ -85,8 +85,8 @@ class Ravenly {
     }
 
     public static function getUser() {
-        static $user = null;
         Log::info('Ravenly: fetching user.');
+        static $user;
 
         if(is_null($user)) {
             $class = Config::get('ravenly::auth.model') || '\Ravenly\Models\RavenUser';
