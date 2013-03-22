@@ -94,7 +94,7 @@ class Ravenly {
             $crsid = Session::get('ucam_webauth_crsid');
             
             // Now we see if we should create a new user, or fetch an old one
-            $exists = call_user_func($class.'::exists', $crsid);
+            $exists = call_user_func($class.'::where_crsid', $crsid)->count() > 0;
             if(!$exists) {
                 Log::info('Ravenly: - user not in database, creating new object.');
                 $user = new $class(array('crsid'=>$crsid), false);
