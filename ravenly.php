@@ -89,8 +89,8 @@ class Ravenly {
         static $user;
 
         if(is_null($user)) {
-            $class = Config::get('ravenly::auth.model') || '\Ravenly\Models\RavenUser';
             Log::info('Ravenly: - user not previously set, creating.');
+            $class = Config::get('ravenly::auth.model') or 'Models\RavenUser';
             $crsid = Session::get('ucam_webauth_crsid');
             
             // Now we see if we should create a new user, or fetch an old one
