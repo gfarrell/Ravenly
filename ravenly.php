@@ -23,14 +23,27 @@ class Ravenly {
             if(!$auth) return false;
 
             if($webauth->success()) {
-                Ravenly::is_logged_in = true;
                 Log::info('Ravenly: - webauth authentication successful.');
+                Ravenly::loggedIn(true);
             }
 
             Session::set('ucam_webauth_crsid', $webauth->principal());
         }
 
+
         return $this->authenticate(Ravenly::getUser());
+    }
+
+    public static function loggedIn($li = null) {
+        static $logged_in;
+
+        if(is_null($logged_in)) $logged_in = false;
+
+        if(!is_null($li)) {
+            $logged_in = $li;
+        }
+
+        return $logged_in;
     }
 
     public static function logout() {
