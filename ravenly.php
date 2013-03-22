@@ -76,7 +76,7 @@ class Ravenly {
 
         // Check user group conditions
         if(array_key_exists('group', $c) && is_array($c['group'])) {
-            return $user->inGroups($c['group']));
+            return $user->inGroups($c['group']);
         }
 
         Log::info('Ravenly: - authentication successful.');
