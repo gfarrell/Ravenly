@@ -1,6 +1,8 @@
 <?php
 namespace Ravenly\Models;
 
+use Eloquent;
+
 class RavenUser extends Eloquent{
     /* --- Instance Methods --- */
 
