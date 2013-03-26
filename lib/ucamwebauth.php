@@ -32,6 +32,7 @@ namespace Ravenly\Lib;
 
 use Log;
 use Redirect;
+use URI;
     
 class UcamWebauth {
 
@@ -333,25 +334,26 @@ class UcamWebauth {
   }
 
   function url() {
-    $hostname = urlencode($this->hostname);
-    $port = $_SERVER{'SERVER_PORT'};
-    if ($this->using_https()) {
-      $protocol = 'https://';
-      if ($port == '443') $port = '';
-    } else {
-      $protocol = 'http://';
-      if ($port == '80') $port = '';
-    }
-    $port = urlencode($port);           // should be redundant, of course
-    $url = $protocol . $hostname;
-    if ($port != '') $url .= ':' . $port;
-    $url .= $_SERVER['SCRIPT_NAME'];
-    if (isset($_SERVER['PATH_INFO'])) $url .= $_SERVER['PATH_INFO'];
-    if (isset($_SERVER['QUERY_STRING']) and $_SERVER['QUERY_STRING'] != '') 
-    {
-      $url .= '?' . $_SERVER['QUERY_STRING'];
-    }
-    return $url;
+    // $hostname = urlencode($this->hostname);
+    // $port = $_SERVER{'SERVER_PORT'};
+    // if ($this->using_https()) {
+    //   $protocol = 'https://';
+    //   if ($port == '443') $port = '';
+    // } else {
+    //   $protocol = 'http://';
+    //   if ($port == '80') $port = '';
+    // }
+    // $port = urlencode($port);           // should be redundant, of course
+    // $url = $protocol . $hostname;
+    // if ($port != '') $url .= ':' . $port;
+    // $url .= $_SERVER['SCRIPT_NAME'];
+    // if (isset($_SERVER['PATH_INFO'])) $url .= $_SERVER['PATH_INFO'];
+    // if (isset($_SERVER['QUERY_STRING']) and $_SERVER['QUERY_STRING'] != '') 
+    // {
+    //   $url .= '?' . $_SERVER['QUERY_STRING'];
+    // }
+
+    return URI::full();
   }
 
   function full_cookie_name() {
