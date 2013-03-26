@@ -25,8 +25,13 @@
 // $Id: ucam_webauth.php,v 1.6 2008-04-29 08:44:32 jw35 Exp $
 //
 // Version 0.51
+// 
+// Adapted for Laravel by Gideon Farrell <me@gideonfarrell.co.uk>
 
 namespace Ravenly\Lib;
+
+use Log;
+use Redirect;
     
 class UcamWebauth {
 
@@ -301,7 +306,7 @@ class UcamWebauth {
     // Band-aid test for the most obvious cause of error - whole
     // thing needs improvement
     if (!$key_file) {
-      error_log('Failed to open key file ' . $key_filename,0);
+      Log::write('error', 'UcamWebauth: Failed to open key file ' . $key_filename,0);
       return false;
     }
     $key_str = fread($key_file, filesize($key_filename));
@@ -395,7 +400,7 @@ class UcamWebauth {
     // log a warning if being used to authenticate POST requests
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-      error_log('Ucam_Webauth PHP Agent invoked for POST request, which it does\'nt really support', 0);
+      Log::write('error', 'UcamWebauth: PHP Agent invoked for POST request, which it does\'nt really support');
     }
 
     // Check that the hostname is set explicitly (since we cannot trust
@@ -406,7 +411,7 @@ class UcamWebauth {
     $this->session_ticket[$this->SESSION_TICKET_MSG] = 
         'Ucam_Webauth configuration error - mandatory hostname not defined';
     $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
-    error_log('hostname not set in Ucam_Webauth object, but is mandatory');
+    Log::write('error', 'UcamWebauth: hostname not set in Ucam_Webauth object, but is mandatory');
     return TRUE;
     }
 
@@ -418,19 +423,19 @@ class UcamWebauth {
      * authentication response won't trigger a 'stale authentication' error
      */
 
-    error_log('FIRST STAGE', 0);
+    Log::write('info', 'UcamWebauth: FIRST STAGE');
 
     $current_timeout_message = NULL;
 
     if ($this->do_session) {
       
-      error_log('session management ON', 0);
+      Log::write('info', 'UcamWebauth: session management ON');
 
       if (isset($_COOKIE[$this->full_cookie_name()]) and
       $_COOKIE[$this->full_cookie_name()] != $this->TESTSTRING) {
 
-    error_log('existing authentication cookie found', 0);
-        error_log('cookie: ' . rawurldecode($_COOKIE[$this->full_cookie_name()]));
+    Log::write('info', 'UcamWebauth: existing authentication cookie found');
+    Log::write('info', 'UcamWebauth: - cookie: ' . rawurldecode($_COOKIE[$this->full_cookie_name()]));
 
     $old_cookie = explode(' ', rawurldecode($_COOKIE[$this->full_cookie_name()]));
     //$this->session_ticket = explode('!', $old__cookie[0]);
@@ -443,7 +448,7 @@ class UcamWebauth {
                     implode('!', $values_for_verify),
                     $sig)) {
 
-      error_log('existing authentication cookie verified', 0);
+      Log::write('info', 'UcamWebauth: existing authentication cookie verified');
 
       $issue = $this->iso2time($this->session_ticket[$this->SESSION_TICKET_ISSUE]);
       $expire = $this->iso2time($this->session_ticket[$this->SESSION_TICKET_EXPIRE]);
@@ -459,15 +464,15 @@ class UcamWebauth {
             $this->using_https());
 
         }
-        error_log('AUTHENTICATION COMPLETE', 0);
+        Log::write('info', 'UcamWebauth: AUTHENTICATION COMPLETE');
         return TRUE;
       } else {
         $current_timeout_message = $this->timeout_message;
-            error_log('local session cookie expired', 0);
-            error_log('issue/now/expire: ' . $issue . '/' . $now . '/' . $expire);
+            Log::write('info', 'UcamWebauth: local session cookie expired');
+            Log::write('info', 'UcamWebauth: issue/now/expire: ' . $issue . '/' . $now . '/' . $expire);
       }
     } else {
-      error_log('AUTHENTICATION FAILED, session cookie sig invalid', 0);
+      Log::write('info', 'UcamWebauth: AUTHENTICATION FAILED, session cookie sig invalid');
       $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
       return TRUE;
     }
@@ -483,14 +488,14 @@ class UcamWebauth {
      * the browser's location bar of the WLS response.
      */
 
-    error_log('SECOND STAGE');
+    Log::write('info', 'UcamWebauth: SECOND STAGE');
 
     $token = NULL;
 
     if (isset($_SERVER['QUERY_STRING']) and
     preg_match('/.*WLS-Response=/', $_SERVER['QUERY_STRING'])) {
 
-      error_log('WLS response: '.$_SERVER['QUERY_STRING'], 0);
+      Log::write('info', 'UcamWebauth: WLS response: '.$_SERVER['QUERY_STRING']);
 
       // does this change QUERY_STRING??:
       $token = explode('!', preg_replace('/.*WLS-Response=/', '', rawurldecode($_SERVER['QUERY_STRING'])));
@@ -595,7 +600,7 @@ class UcamWebauth {
 
       $sig = $this->hmac_sha1($this->cookie_key, $cookie);
       $cookie .= '!' . $sig;
-      error_log('cookie: ' . $cookie); 
+      Log::write('info', 'UcamWebauth: cookie: ' . $cookie); 
 
       // End
 
@@ -606,11 +611,9 @@ class UcamWebauth {
         $this->cookie_domain,
         $this->using_https());
 
-      error_log('session cookie established, redirecting...', 0);
+      Log::write('info', 'UcamWebauth: session cookie established, redirecting...');
       
-      header('Location: ' . $token[$this->WLS_TOKEN_URL]);
-      
-      return FALSE;
+      return Redirect::to($token[$this->WLS_TOKEN_URL], 302, $this->using_https());
     }
     
     /* THIRD: send a request to the WLS. If we are doing session
@@ -618,7 +621,7 @@ class UcamWebauth {
      * it's still available when we get back.
      */
     
-    error_log('THIRD STAGE', 0);
+    Log::write('info', 'UcamWebauth: THIRD STAGE');
 
     if ($this->do_session) {
       // If the hostname from the request (Host: header) does not match the
@@ -633,11 +636,12 @@ class UcamWebauth {
       if (isset($_SERVER['HTTP_HOST']) and (strtolower($this->hostname) !=
                                             strtolower($_SERVER['HTTP_HOST'])))
       {
-      header('Location: ' . $this->url());
-      return FALSE;
+      
+      return Redirect::to($this->url(), 302, $this->using_https());
+      
       }
 
-      error_log('setting pre-session cookie', 0);
+      Log::write('info', 'UcamWebauth: setting pre-session cookie');
       setcookie($this->full_cookie_name(),
         $this->TESTSTRING,
         0,
@@ -646,7 +650,7 @@ class UcamWebauth {
         $this->using_https());
     }
     
-    $dest = 'Location: ' . $this->auth_service .
+    $dest = $this->auth_service .
       '?ver=' . $this->PROTOCOL_VERSION .
       '&url=' . rawurlencode($this->url());
     if (isset($this->description)) $dest .= '&desc=' . rawurlencode($this->description);
@@ -660,11 +664,10 @@ class UcamWebauth {
     }
     if ($this->fail == TRUE) $dest .= '&fail=yes';
     
-    error_log('redirecting...', 0);
-    
-    header($dest);
-    
-    return FALSE;
+    Log::write('info', 'UcamWebauth: redirecting...');
+    Log::write('info', 'UcamWebauth: header = '.$dest);
+
+    return Redirect::to($dest, 302, $this->using_https());
   }
     
     function checkAuthentication($aauth = NULL, $interact = NULL, $fail = NULL, $parameters = NULL) {
