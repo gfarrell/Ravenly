@@ -1,6 +1,8 @@
 <?php
 namespace Ravenly\Lib;
 
+use Config;
+
 class LDAP {
     public static function config() {
         return Config::get('ravenly::ldap');
