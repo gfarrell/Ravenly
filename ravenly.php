@@ -4,6 +4,7 @@ namespace Ravenly;
 use Log;
 use Config;
 use Session;
+use Bundle;
 
 class Ravenly {
     public static function login() {
