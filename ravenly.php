@@ -5,6 +5,7 @@ use Log;
 use Config;
 use Session;
 use Bundle;
+use Response;
 
 class Ravenly {
     public static function login() {
@@ -52,8 +53,11 @@ class Ravenly {
 
     public static function authenticate($user, $conditions = array()) {
         Log::info('Ravenly: authenticating.');
+
+        $status = true;
+
         // If no user, then fail auth
-        if(!$user) return false;
+        if(!$user) $status = false;
 
         // Get auth conditions
         $c = Config::get('ravenly::auth.conditions');
@@ -64,27 +68,42 @@ class Ravenly {
         Log::info('Ravenly: - checking conditions.');
         // Check crsid conditions
         if(array_key_exists('crsid', $c) && is_array($c['crsid'])) {
-            if(!in_array($user->crsid, $c['crsid'])) return false;
+            if(!in_array($user->crsid, $c['crsid'])) {
+                Log::info('Ravenly: ! failed crsid condition.');
+                $status = false;
+            }
         }
 
         // Check College conditions
         if(array_key_exists('collegecode', $c) && is_array($c['collegecode'])) {
-            if(!in_array($user->collegecode, $c['collegecode'])) return false;
+            if(!in_array($user->collegecode, $c['collegecode'])) {
+                Log::info('Ravenly: ! failed college condition.');
+                $status = false;
+            }
         }
 
         // Check if in the DB (if necessary)
         if(array_key_exists('force_db', $c)) {
-            if(!$user->exists && $c['force_db']) return false;
+            if(!$user->exists && $c['force_db']) {
+                Log::info('Ravenly: ! failed force_db condition.');
+                $status = false;
+            }
         }
 
         // Check user group conditions
         if(array_key_exists('group', $c) && is_array($c['group'])) {
-            return $user->inGroups($c['group']);
+            if(!$user->inGroups($c['group'])) {
+                Log::info('Ravenly: ! failed group condition.');
+                $status = false;
+            }
         }
 
-        Log::info('Ravenly: - authentication successful.');
-        // If nothing fails, then all is good
-        return true;
+        if($status) {
+            Log::info('Ravenly: - authentication successful.');
+        } else {
+            Log::info('Ravenly: - authentication failed.');
+            return Response::error(403);
+        }
     }
 
     public static function getUser() {
