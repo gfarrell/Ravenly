@@ -31,7 +31,7 @@ class Ravenly {
         }
 
 
-        return $this->authenticate(Ravenly::getUser());
+        return Ravenly::authenticate(Ravenly::getUser());
     }
 
     public static function loggedIn($li = null) {
