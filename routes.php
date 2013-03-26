@@ -9,9 +9,11 @@ Route::filter('raven', function($conditions = array()) {
         $status = Ravenly\Ravenly::login();
     }
 
-    if(!$status) {
+    if($status === false) {
         Log::info('Ravenly: [!] not authorised.');
         return Response::error(403);
+    } else {
+        return $status;
     }
 });
 ?>

@@ -18,7 +18,8 @@ class Ravenly {
                 'hostname'      => $_SERVER['HTTP_HOST']
             ));
             $auth = $webauth->authenticate();
-            if(!$auth) return false;
+            
+            if($auth !== true) return $auth;
 
             if($webauth->success()) {
                 Log::info('Ravenly: - webauth authentication successful.');
