@@ -4,6 +4,8 @@ namespace Ravenly\Models;
 use Eloquent;
 
 class RavenUser extends Eloquent{
+    public static $table = 'users';
+
     /* --- Instance Methods --- */
 
     /**
