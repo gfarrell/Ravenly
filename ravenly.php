@@ -27,7 +27,7 @@ class Ravenly {
                 Ravenly::loggedIn(true);
             }
 
-            Session::set('ucam_webauth_crsid', $webauth->principal());
+            Session::put('ucam_webauth_crsid', $webauth->principal());
         }
 
 
