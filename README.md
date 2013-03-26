@@ -13,12 +13,7 @@ Activate the bundle in `bundles.php`:
     'ravenly' => array(
         'autoloads' => array(
             'namespaces'    =>  array(
-                'Ravenly'           =>'(:bundle)',
-                'Ravenly\Models'    =>'(:bundle)/models'
-            ),
-            'directories'   =>  array(
-                '(:bundle)/models',
-                '(:bundle)/libraries'
+                'Ravenly'           =>'(:bundle)'
             )
         ),
         'auto'  => true
