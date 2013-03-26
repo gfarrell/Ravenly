@@ -32,7 +32,7 @@ class RavenUser extends Eloquent{
      * @return void
      */
     public function fillFromLookup() {
-        $lookup = RavenUser::lookup($crsid);
+        $lookup = RavenUser::lookup($this->crsid);
         if(is_array($lookup)) {
             foreach($lookup as $field => $value) {
                 $this->$field = $value;
