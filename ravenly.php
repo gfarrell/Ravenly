@@ -12,13 +12,14 @@ class Ravenly {
         if(!Ravenly::loggedIn()) {
             Log::info('Ravenly: - Instantiating Ucam_Webauth object.');
             $webauth = new \Ravenly\Lib\UcamWebauth(array(
-                'key_dir'       => Bundle::path('Ravenly').'keys',
+                'key_dir'       => Bundle::path('ravenly').'keys',
                 'cookie_key'    => 'ravenly_k',
                 'cookie_name'   => 'ravenly',
                 'hostname'      => $_SERVER['HTTP_HOST']
             ));
+
             $auth = $webauth->authenticate();
-            
+
             if($auth !== true) return $auth;
 
             if($webauth->success()) {
