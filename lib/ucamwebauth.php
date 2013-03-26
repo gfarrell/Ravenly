@@ -28,7 +28,7 @@
 
 namespace Ravenly\Lib;
     
-class Ucam_Webauth {
+class UcamWebauth {
 
   var $PROTOCOL_VERSION = '1';
   var $SESSION_TICKET_VERSION = '1';

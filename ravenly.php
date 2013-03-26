@@ -10,7 +10,7 @@ class Ravenly {
         Log::info('Ravenly: logging in.');
         if(!Ravenly::loggedIn()) {
             Log::info('Ravenly: - Instantiating Ucam_Webauth object.');
-            $webauth = new \Ravenly\Lib\Ucam_Webauth(array(
+            $webauth = new \Ravenly\Lib\UcamWebauth(array(
                 'key_dir'       => Bundle::path('Ravenly').'keys',
                 'cookie_key'    => 'ravenly_k',
                 'cookie_name'   => 'ravenly',
