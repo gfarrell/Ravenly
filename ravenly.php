@@ -8,7 +8,7 @@ use Session;
 class Ravenly {
     public static function login() {
         Log::info('Ravenly: logging in.');
-        if(!Ravenly::is_logged_in) {
+        if(!Ravenly::loggedIn()) {
             Log::info('Ravenly: - Instantiating Ucam_Webauth object.');
             $webauth = new \Ravenly\Lib\Ucam_Webauth(array(
                 'key_dir'       => Bundle::path('Ravenly').'keys',
