@@ -12,8 +12,8 @@ class RavenUser extends Eloquent{
      * Returns user's groups
      * @return Relationship the users groups
      */
-    public function groups() {
-        return $this->has_many_and_belongs_to('Group');
+    public function group() {
+        return $this->has_many_and_belongs_to('UserGroup');
     }
 
     /**
