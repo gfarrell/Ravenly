@@ -410,11 +410,11 @@ class UcamWebauth {
 
     if (! isset($this->hostname) or $this->hostname == '')
     {
-    $this->session_ticket[$this->SESSION_TICKET_MSG] = 
-        'Ucam_Webauth configuration error - mandatory hostname not defined';
-    $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
-    Log::write('error', 'UcamWebauth: hostname not set in Ucam_Webauth object, but is mandatory');
-    return TRUE;
+      $this->session_ticket[$this->SESSION_TICKET_MSG] = 
+          'Ucam_Webauth configuration error - mandatory hostname not defined';
+      $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
+      Log::write('error', 'UcamWebauth: hostname not set in Ucam_Webauth object, but is mandatory');
+      return TRUE;
     }
 
     /* FIRST: if we are doing session management then see if we already
@@ -430,54 +430,54 @@ class UcamWebauth {
     $current_timeout_message = NULL;
 
     if ($this->do_session) {
-      
+
       Log::write('info', 'UcamWebauth: session management ON');
 
       if (isset($_COOKIE[$this->full_cookie_name()]) and
-      $_COOKIE[$this->full_cookie_name()] != $this->TESTSTRING) {
+        $_COOKIE[$this->full_cookie_name()] != $this->TESTSTRING) {
 
-    Log::write('info', 'UcamWebauth: existing authentication cookie found');
-    Log::write('info', 'UcamWebauth: - cookie: ' . rawurldecode($_COOKIE[$this->full_cookie_name()]));
+        Log::write('info', 'UcamWebauth: existing authentication cookie found');
+        Log::write('info', 'UcamWebauth: - cookie: ' . rawurldecode($_COOKIE[$this->full_cookie_name()]));
 
-    $old_cookie = explode(' ', rawurldecode($_COOKIE[$this->full_cookie_name()]));
-    //$this->session_ticket = explode('!', $old__cookie[0]);
-    $this->session_ticket = explode('!', rawurldecode($_COOKIE[$this->full_cookie_name()]));
+        $old_cookie = explode(' ', rawurldecode($_COOKIE[$this->full_cookie_name()]));
+        //$this->session_ticket = explode('!', $old__cookie[0]);
+        $this->session_ticket = explode('!', rawurldecode($_COOKIE[$this->full_cookie_name()]));
 
-    $values_for_verify = $this->session_ticket;
-    $sig = array_pop($values_for_verify);
+        $values_for_verify = $this->session_ticket;
+        $sig = array_pop($values_for_verify);
 
-    if ($this->hmac_sha1_verify($this->cookie_key,
-                    implode('!', $values_for_verify),
-                    $sig)) {
+        if ($this->hmac_sha1_verify($this->cookie_key,
+          implode('!', $values_for_verify),
+          $sig)) {
 
-      Log::write('info', 'UcamWebauth: existing authentication cookie verified');
+          Log::write('info', 'UcamWebauth: existing authentication cookie verified');
 
-      $issue = $this->iso2time($this->session_ticket[$this->SESSION_TICKET_ISSUE]);
-      $expire = $this->iso2time($this->session_ticket[$this->SESSION_TICKET_EXPIRE]);
-      $now = time();
+          $issue = $this->iso2time($this->session_ticket[$this->SESSION_TICKET_ISSUE]);
+          $expire = $this->iso2time($this->session_ticket[$this->SESSION_TICKET_EXPIRE]);
+          $now = time();
 
-      if ($issue <= $now and $now < $expire) {
-        if ($this->session_ticket[$this->SESSION_TICKET_STATUS] != '200') {
-          setcookie($this->full_cookie_name(),
-            '',
-            1,
-            $this->cookie_path,
-            $this->cookie_domain,
-            $this->using_https());
+          if ($issue <= $now and $now < $expire) {
+            if ($this->session_ticket[$this->SESSION_TICKET_STATUS] != '200') {
+              setcookie($this->full_cookie_name(),
+                '',
+                1,
+                $this->cookie_path,
+                $this->cookie_domain,
+                $this->using_https());
+            }
 
-        }
-        Log::write('info', 'UcamWebauth: AUTHENTICATION COMPLETE');
-        return TRUE;
-      } else {
-        $current_timeout_message = $this->timeout_message;
+            Log::write('info', 'UcamWebauth: AUTHENTICATION COMPLETE');
+            return TRUE;
+          } else {
+            $current_timeout_message = $this->timeout_message;
             Log::write('info', 'UcamWebauth: local session cookie expired');
             Log::write('info', 'UcamWebauth: issue/now/expire: ' . $issue . '/' . $now . '/' . $expire);
-      }
-    } else {
-      Log::write('info', 'UcamWebauth: AUTHENTICATION FAILED, session cookie sig invalid');
-      $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
-      return TRUE;
-    }
+          }
+        } else {
+          Log::write('info', 'UcamWebauth: AUTHENTICATION FAILED, session cookie sig invalid');
+          $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
+          return TRUE;
+        }
       }
     }
 
@@ -495,7 +495,7 @@ class UcamWebauth {
     $token = NULL;
 
     if (isset($_SERVER['QUERY_STRING']) and
-    preg_match('/.*WLS-Response=/', $_SERVER['QUERY_STRING'])) {
+      preg_match('/.*WLS-Response=/', $_SERVER['QUERY_STRING'])) {
 
       Log::write('info', 'UcamWebauth: WLS response: '.$_SERVER['QUERY_STRING']);
 
@@ -508,9 +508,9 @@ class UcamWebauth {
       $key = $this->load_key($token[$this->WLS_TOKEN_KEYID]);
 
       if ($key == NULL) {
-    $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Failed to load '.$this->key_dir . '/' . $token[$this->WLS_TOKEN_KEYID] . '.crt';
-    $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
-    return $this->COMPLETE;
+        $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Failed to load '.$this->key_dir . '/' . $token[$this->WLS_TOKEN_KEYID] . '.crt';
+        $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
+        return $this->COMPLETE;
       }
       */
       //echo '<p>' . implode('!', $token) . '</p>';
@@ -518,39 +518,40 @@ class UcamWebauth {
       $key_id = array_pop($token);
 
       if ($token[$this->WLS_TOKEN_VER] != $this->PROTOCOL_VERSION) {
-    $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Wrong protocol version in authentication service reply';
-    $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
+        $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Wrong protocol version in authentication service reply';
+        $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
       } else if ($token[$this->WLS_TOKEN_STATUS] != '200') {
-    $this->session_ticket[$this->SESSION_TICKET_MSG] = $this->error_message[$token[$this->WLS_TOKEN_STATUS]];
-    if (isset($token[$this->WLS_TOKEN_MSG])) $this->session_ticket[$this->SESSION_TICKET_MSG] .= $token[$this->WLS_TOKEN_MSG];
-    $this->session_ticket[$this->SESSION_TICKET_STATUS] = $token[$this->WLS_TOKEN_STATUS];
+        $this->session_ticket[$this->SESSION_TICKET_MSG] = $this->error_message[$token[$this->WLS_TOKEN_STATUS]];
+
+        if (isset($token[$this->WLS_TOKEN_MSG])) $this->session_ticket[$this->SESSION_TICKET_MSG] .= $token[$this->WLS_TOKEN_MSG];
+        $this->session_ticket[$this->SESSION_TICKET_STATUS] = $token[$this->WLS_TOKEN_STATUS];
       } else if ($this->check_sig(implode('!', $token), $sig, $key_id) != 1) {
-    $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Invalid WLS token signature';
-    $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
-    return TRUE;
+        $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Invalid WLS token signature';
+        $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
+        return TRUE;
       } else {
-    $now = time();
-    $issue = $this->iso2time($token[$this->WLS_TOKEN_ISSUE]);
+        $now = time();
+        $issue = $this->iso2time($token[$this->WLS_TOKEN_ISSUE]);
 
-    if (!isset($issue)) {
-      $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Unable to read issue time in authentication service reply';
-      $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
-    } else if ($issue > $now + $this->clock_skew + 1) {
-      $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Authentication service reply aparently issued in the future: ' . $token[$this->WLS_TOKEN_ISSUE];
-      $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
-    } else if ($now - $this->clock_skew - 1 > $issue + $this->response_timeout) {
-      $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Stale authentication service reply issue at ' . $token[$this->WLS_TOKEN_ISSUE];
-      $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
-    }
+        if (!isset($issue)) {
+          $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Unable to read issue time in authentication service reply';
+          $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
+        } else if ($issue > $now + $this->clock_skew + 1) {
+          $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Authentication service reply aparently issued in the future: ' . $token[$this->WLS_TOKEN_ISSUE];
+          $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
+        } else if ($now - $this->clock_skew - 1 > $issue + $this->response_timeout) {
+          $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Stale authentication service reply issue at ' . $token[$this->WLS_TOKEN_ISSUE];
+          $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
+        }
 
-    $response_url = $token[$this->WLS_TOKEN_URL];
-    $response_url = preg_replace('/\?.*$/', '', $response_url);
-    $this_url = preg_replace('/\?.+$/', '', $this->url());
+        $response_url = $token[$this->WLS_TOKEN_URL];
+        $response_url = preg_replace('/\?.*$/', '', $response_url);
+        $this_url = preg_replace('/\?.+$/', '', $this->url());
     
-    if ($this_url != $response_url) {
-      $this->session_ticket[$this->SESSION_TICKET_MSG] = 'URL in response ticket doesn\'t match this URL: ' . $response_url . ' != ' . $this_url;
-      $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
-    }
+        if ($this_url != $response_url) {
+          $this->session_ticket[$this->SESSION_TICKET_MSG] = 'URL in response ticket doesn\'t match this URL: ' . $response_url . ' != ' . $this_url;
+          $this->session_ticket[$this->SESSION_TICKET_STATUS] = '600';
+        }
       }
       
       // work out session expiry time
@@ -579,10 +580,11 @@ class UcamWebauth {
       // a redirect loop.
       
       if (!isset($_COOKIE[$this->full_cookie_name()]) or
-      $_COOKIE[$this->full_cookie_name()] != $this->TESTSTRING) {
-    $this->session_ticket[$this->SESSION_TICKET_STATUS] = '610';
-    $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Browser is not accepting session cookie';
-    return TRUE;
+        $_COOKIE[$this->full_cookie_name()] != $this->TESTSTRING) {
+        
+        $this->session_ticket[$this->SESSION_TICKET_STATUS] = '610';
+        $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Browser is not accepting session cookie';
+        return TRUE;
       }
 
       $this->session_ticket[$this->SESSION_TICKET_VER] = $this->SESSION_TICKET_VERSION;
@@ -593,16 +595,15 @@ class UcamWebauth {
 
       $cookie = '';
       for ($i=0; $i<$this->SESSION_TICKET_PARAMS; $i++) {
-    if (isset($this->session_ticket[$i])) 
-      $cookie .= $this->session_ticket[$i];
-    $cookie .= '!';
+        if (isset($this->session_ticket[$i])) $cookie .= $this->session_ticket[$i];
+        $cookie .= '!';
       }
-      if (isset($this->session_ticket[$this->SESSION_TICKET_PARAMS])) 
-    $cookie .= $this->session_ticket[$this->SESSION_TICKET_PARAMS];
+      if (isset($this->session_ticket[$this->SESSION_TICKET_PARAMS])) $cookie .= $this->session_ticket[$this->SESSION_TICKET_PARAMS];
 
       $sig = $this->hmac_sha1($this->cookie_key, $cookie);
       $cookie .= '!' . $sig;
-      Log::write('info', 'UcamWebauth: cookie: ' . $cookie); 
+
+      Log::write('info', 'UcamWebauth: cookie: ' . $cookie);
 
       // End
 
@@ -672,18 +673,17 @@ class UcamWebauth {
     return Redirect::to($dest, 302, $this->using_https());
   }
     
-    function checkAuthentication($aauth = NULL, $interact = NULL, $fail = NULL, $parameters = NULL) {
+  function checkAuthentication($aauth = NULL, $interact = NULL, $fail = NULL, $parameters = NULL) {  
+    $token = NULL;
+      
+    if (isset($_SERVER['QUERY_STRING']) and
+      preg_match('/^WLS-Response=/', $_SERVER['QUERY_STRING'])) {
+          
+        // does this change QUERY_STRING??:
+        $token = explode('!', preg_replace('/^WLS-Response=/', '', rawurldecode($_SERVER['QUERY_STRING'])));
         
-        $token = NULL;
-        
-        if (isset($_SERVER['QUERY_STRING']) and
-            preg_match('/^WLS-Response=/', $_SERVER['QUERY_STRING'])) {
-            
-            // does this change QUERY_STRING??:
-            $token = explode('!', preg_replace('/^WLS-Response=/', '', rawurldecode($_SERVER['QUERY_STRING'])));
-            
-            header('Location: ' . $token[$this->WLS_TOKEN_URL] . '&' .  $_SERVER['QUERY_STRING']);
-        }
+        header('Location: ' . $token[$this->WLS_TOKEN_URL] . '&' .  $_SERVER['QUERY_STRING']);
     }
+  }
 }
 ?>
