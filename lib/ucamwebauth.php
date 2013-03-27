@@ -33,6 +33,7 @@ namespace Ravenly\Lib;
 use Log;
 use Redirect;
 use URI;
+use Cookie;
     
 class UcamWebauth {
 
@@ -433,15 +434,14 @@ class UcamWebauth {
 
       Log::write('info', 'UcamWebauth: session management ON');
 
-      if (isset($_COOKIE[$this->full_cookie_name()]) and
-        $_COOKIE[$this->full_cookie_name()] != $this->TESTSTRING) {
+      if (!is_null(Cookie::get($this->full_cookie_name())) and Cookie::get($this->full_cookie_name()) != $this->TESTSTRING) {
 
         Log::write('info', 'UcamWebauth: existing authentication cookie found');
-        Log::write('info', 'UcamWebauth: - cookie: ' . rawurldecode($_COOKIE[$this->full_cookie_name()]));
+        Log::write('info', 'UcamWebauth: - cookie: ' . rawurldecode(Cookie::get($this->full_cookie_name())));
 
-        $old_cookie = explode(' ', rawurldecode($_COOKIE[$this->full_cookie_name()]));
+        $old_cookie = explode(' ', rawurldecode(Cookie::get($this->full_cookie_name())));
         //$this->session_ticket = explode('!', $old__cookie[0]);
-        $this->session_ticket = explode('!', rawurldecode($_COOKIE[$this->full_cookie_name()]));
+        $this->session_ticket = explode('!', rawurldecode(Cookie::get($this->full_cookie_name())));
 
         $values_for_verify = $this->session_ticket;
         $sig = array_pop($values_for_verify);
@@ -458,12 +458,7 @@ class UcamWebauth {
 
           if ($issue <= $now and $now < $expire) {
             if ($this->session_ticket[$this->SESSION_TICKET_STATUS] != '200') {
-              setcookie($this->full_cookie_name(),
-                '',
-                1,
-                $this->cookie_path,
-                $this->cookie_domain,
-                $this->using_https());
+              Cookie::put($this->full_cookie_name(), '', 1);
             }
 
             Log::write('info', 'UcamWebauth: AUTHENTICATION COMPLETE');
@@ -576,11 +571,10 @@ class UcamWebauth {
       // otherwise establish a session cookie to maintain the
       // session ticket. First check that the cookie actually exists
       // with a test value, because it should have been created
-      // previously and if its not there we'll probably end up in
+      // previously and if it's not there we'll probably end up in
       // a redirect loop.
       
-      if (!isset($_COOKIE[$this->full_cookie_name()]) or
-        $_COOKIE[$this->full_cookie_name()] != $this->TESTSTRING) {
+      if (is_null(Cookie::get($this->full_cookie_name())) or Cookie::get($this->full_cookie_name()) != $this->TESTSTRING) {
         
         $this->session_ticket[$this->SESSION_TICKET_STATUS] = '610';
         $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Browser is not accepting session cookie';
@@ -607,12 +601,7 @@ class UcamWebauth {
 
       // End
 
-      setcookie($this->full_cookie_name(),
-        $cookie,
-        0,
-        $this->cookie_path,
-        $this->cookie_domain,
-        $this->using_https());
+      Cookie::put($this->full_cookie_name(), $cookie);
 
       Log::write('info', 'UcamWebauth: session cookie established, redirecting...');
       
@@ -645,12 +634,7 @@ class UcamWebauth {
       }
 
       Log::write('info', 'UcamWebauth: setting pre-session cookie');
-      setcookie($this->full_cookie_name(),
-        $this->TESTSTRING,
-        0,
-        $this->cookie_path,
-        $this->cookie_domain,
-        $this->using_https());
+      Cookie::put($this->full_cookie_name(), $this->TESTSTRING);
     }
     
     $dest = $this->auth_service .
