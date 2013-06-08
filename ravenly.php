@@ -11,6 +11,12 @@ use Ravenly\Lib\UcamWebauth;
 
 class Ravenly {
     /**
+     * Stores the logged in state.
+     * @var boolean
+     */
+    private static $logged_in = false;
+
+    /**
      * Triggers Raven authentication process and then triggers authentication rules.
      * @return boolean whether user is authenticated both on Raven and according to the defined rules.
      */
@@ -41,16 +47,20 @@ class Ravenly {
         return Ravenly::authenticate(Ravenly::getUser());
     }
 
-    public static function loggedIn($li = null) {
-        static $logged_in;
+    /**
+     * Returns the logged in state.
+     * @return boolean if the user is logged in or not.
+     */
+    public static function loggedIn() {
+        return Ravenly::$logged_in;
+    }
 
-        if(is_null($logged_in)) $logged_in = false;
-
-        if(!is_null($li)) {
-            $logged_in = $li;
-        }
-
-        return $logged_in;
+    /**
+     * Sets the logged in state.
+     * @param boolean $li logged in state
+     */
+    private static function setLoggedIn($li) {
+        Ravenly::$logged_in = !!$li;
     }
 
     /**
