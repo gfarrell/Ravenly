@@ -10,6 +10,10 @@ use Ravenly\Errors\AuthException;
 use Ravenly\Lib\UcamWebauth;
 
 class Ravenly {
+    /**
+     * Triggers Raven authentication process and then triggers authentication rules.
+     * @return boolean whether user is authenticated both on Raven and according to the defined rules.
+     */
     public static function login() {
         Log::info('Ravenly: logging in.');
         if(!Ravenly::loggedIn()) {
@@ -49,10 +53,19 @@ class Ravenly {
         return $logged_in;
     }
 
+    /**
+     * Triggers the logout process, purges Cookies.
+     */
     public static function logout() {
 
     }
 
+    /**
+     * Authenticates the user according to a defined ruleset.
+     * @param  RavenUser $user       the user
+     * @param  array  $conditions [description]
+     * @return [type]             [description]
+     */
     public static function authenticate($user, $conditions = array()) {
         Log::info('Ravenly: authenticating.');
 
