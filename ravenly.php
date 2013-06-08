@@ -21,28 +21,31 @@ class Ravenly {
      * @return boolean whether user is authenticated both on Raven and according to the defined rules.
      */
     public static function login() {
+        static $webauth;
         Log::info('Ravenly: logging in.');
-        if(!Ravenly::loggedIn()) {
+
+        if(is_null($webauth)) {
             Log::info('Ravenly: - Instantiating Ucam_Webauth object.');
-            $webauth = new \Ravenly\Lib\UcamWebauth(array(
+            $webauth = new UcamWebauth(array(
                 'key_dir'       => Bundle::path('ravenly').'keys',
                 'cookie_key'    => 'ravenly_k',
                 'cookie_name'   => 'ravenly',
                 'hostname'      => $_SERVER['HTTP_HOST']
             ));
-
-            $auth = $webauth->authenticate();
-
-            if($auth !== true) return $auth;
-
-            if($webauth->success()) {
-                Log::info('Ravenly: - webauth authentication successful.');
-                Ravenly::loggedIn(true);
-            }
-
-            Session::put('ucam_webauth_crsid', $webauth->principal());
         }
 
+        $auth = $webauth->authenticate();
+        if(!$auth) {
+            throw new AuthException($webauth->status() . " " . $webauth->msg());
+        }
+
+        if($webauth->success()) {
+            Log::info('Ravenly: - webauth authentication successful.');
+            Ravenly::setLoggedIn(true);
+            Session::put('ucam_webauth_crsid', $webauth->principal());
+        } else {
+            throw new AuthException('Raven authentication not completed.');
+        }
 
         return Ravenly::authenticate(Ravenly::getUser());
     }
