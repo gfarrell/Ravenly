@@ -6,6 +6,8 @@ use Config;
 use Session;
 use Bundle;
 use Response;
+use Ravenly\Errors\AuthException;
+use Ravenly\Lib\UcamWebauth;
 
 class Ravenly {
     public static function login() {
