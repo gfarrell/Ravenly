@@ -47,7 +47,7 @@ class Ravenly {
                 Ravenly::setLoggedIn(true);
                 Session::put('ucam_webauth_crsid', $webauth->principal());
             } else {
-                throw new AuthException('Raven authentication not completed.');
+                throw new AuthException('Raven authentication not completed: ' . $webauth->status() . ' ' . $webauth->msg());
             }
 
             return Ravenly::authenticate(Ravenly::getUser());
