@@ -32,7 +32,7 @@ namespace Ravenly\Lib;
 
 use Log;
 use Redirect;
-use URI;
+use URL;
 use Cookie;
     
 class UcamWebauth {
@@ -354,7 +354,7 @@ class UcamWebauth {
     //   $url .= '?' . $_SERVER['QUERY_STRING'];
     // }
 
-    return URI::full();
+    return URL::current();
   }
 
   function full_cookie_name() {
