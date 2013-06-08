@@ -35,19 +35,23 @@ class Ravenly {
         }
 
         $auth = $webauth->authenticate();
-        if(!$auth) {
-            throw new AuthException($webauth->status() . " " . $webauth->msg());
-        }
-
-        if($webauth->success()) {
-            Log::info('Ravenly: - webauth authentication successful.');
-            Ravenly::setLoggedIn(true);
-            Session::put('ucam_webauth_crsid', $webauth->principal());
+        if(!is_bool($auth)) {
+            return $auth;
         } else {
-            throw new AuthException('Raven authentication not completed.');
-        }
+            if(!$auth) {
+                throw new AuthException($webauth->status() . " " . $webauth->msg());
+            }
 
-        return Ravenly::authenticate(Ravenly::getUser());
+            if($webauth->success()) {
+                Log::info('Ravenly: - webauth authentication successful.');
+                Ravenly::setLoggedIn(true);
+                Session::put('ucam_webauth_crsid', $webauth->principal());
+            } else {
+                throw new AuthException('Raven authentication not completed.');
+            }
+
+            return Ravenly::authenticate(Ravenly::getUser());
+        }
     }
 
     /**
