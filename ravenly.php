@@ -50,7 +50,7 @@ class Ravenly {
                 throw new AuthException('Raven authentication not completed: ' . $webauth->status() . ' ' . $webauth->msg());
             }
 
-            return Ravenly::authenticate(Ravenly::getUser());
+            return Ravenly::authenticate(Ravenly::user());
         }
     }
 
@@ -138,7 +138,7 @@ class Ravenly {
         }
     }
 
-    public static function getUser() {
+    public static function user() {
         Log::info('Ravenly: fetching user.');
         static $user;
 
