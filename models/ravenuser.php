@@ -2,6 +2,7 @@
 namespace Ravenly\Models;
 
 use Eloquent;
+use PhpLib\Set;
 
 class RavenUser extends Eloquent{
     public static $table = 'users';
