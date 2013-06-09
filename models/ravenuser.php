@@ -13,8 +13,8 @@ class RavenUser extends Eloquent{
      * Returns user's groups
      * @return Relationship the users groups
      */
-    public function group() {
-        return $this->has_many_and_belongs_to('UserGroup');
+    public function groups() {
+        return $this->has_many_and_belongs_to('UserGroup', 'user_usergroup', 'user_id');
     }
 
     /**
@@ -24,8 +24,7 @@ class RavenUser extends Eloquent{
      */
     public function inGroup($group) {
         if(!is_array($group)) $group = array($group);
-
-        $gg = Set::extract('name', $this->groups()->get());
+        $gg = Set::extract($this->groups()->get(), '*.attributes.name');
 
         return (count(array_intersect($gg, $group)) > 0);
     }
