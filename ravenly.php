@@ -20,7 +20,7 @@ class Ravenly {
      * Triggers Raven authentication process and then triggers authentication rules.
      * @return boolean whether user is authenticated both on Raven and according to the defined rules.
      */
-    public static function login() {
+    public static function login($conditions = array()) {
         static $webauth;
         Log::info('Ravenly: logging in.');
 
@@ -50,7 +50,7 @@ class Ravenly {
                 throw new AuthException('Raven authentication not completed: ' . $webauth->status() . ' ' . $webauth->msg());
             }
 
-            return Ravenly::authenticate(Ravenly::user());
+            return true;
         }
     }
 
