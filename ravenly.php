@@ -93,7 +93,7 @@ class Ravenly {
 
         // Get auth conditions
         $c = Config::get('ravenly::auth.conditions');
-        if(!is_array($c)) {
+        if(is_array($c)) {
             $c = array_merge($c, $conditions);
         }
 
