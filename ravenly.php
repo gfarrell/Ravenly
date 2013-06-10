@@ -162,6 +162,7 @@ class Ravenly {
                 $user = call_user_func($class.'::where_crsid', $crsid)->first();
             }
 
+            Log::info('Ravenly: - fetching user details from LDAP.');
             $user->fillFromLookup();
         }
         
