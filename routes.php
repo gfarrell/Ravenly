@@ -3,11 +3,20 @@ Route::filter('raven', function($conditions = array()) {
     Log::info('Ravenly: raven filter initiated.');
     if(Ravenly\Ravenly::loggedIn()) {
         Log::info('Ravenly: - user already logged in, authenticating.');
-        $status = Ravenly\Ravenly::authenticate(Ravenly\Ravenly::getUser(), $conditions);
     } else {
         Log::info('Ravenly: - user not logged in, logging in.');
-        $status = Ravenly\Ravenly::login();
+        $l_status = Ravenly\Ravenly::login();
+
+        if(!is_bool($l_status)) {
+            return $l_status;
+        }
+        if($l_status === false) {
+            Log::info('Ravenly: [!] login failed.');
+            return Response::error(403);
+        }
     }
+
+    $status = Ravenly\Ravenly::authenticate(Ravenly\Ravenly::user(), $conditions);
 
     if($status === false) {
         Log::info('Ravenly: [!] not authorised.');
