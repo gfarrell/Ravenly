@@ -140,7 +140,15 @@ class Ravenly {
 
     public static function user() {
         Log::info('Ravenly: fetching user.');
+
         static $user;
+
+        // first try checking the session for user data
+        $sesh_user = Session::get('Ravenly.user');
+        if(!is_null($sesh_user)) {
+            Log::info('Ravenly: - User found in session, retrieving.');
+            $user = $sesh_user;
+        }
 
         if(is_null($user)) {
             Log::info('Ravenly: - user not previously set, creating.');
@@ -164,6 +172,8 @@ class Ravenly {
 
             Log::info('Ravenly: - fetching user details from LDAP.');
             $user->fillFromLookup();
+
+            Session::put('Ravenly.user', $user);
         }
         
         return $user;
