@@ -124,7 +124,7 @@ class Ravenly {
 
         // Check user group conditions
         if(array_key_exists('group', $c) && is_array($c['group'])) {
-            if(!$user->inGroups($c['group'])) {
+            if(!$user->inGroup($c['group'])) {
                 Log::info('Ravenly: ! failed group condition.');
                 $status = false;
             }
