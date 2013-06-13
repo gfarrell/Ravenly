@@ -2,6 +2,7 @@
 namespace Ravenly\Lib;
 
 use Config;
+use PhpLib\Set;
 
 class LDAP {
     public static function config() {
@@ -38,7 +39,7 @@ class LDAP {
 
             foreach($entries as $i => $r) {
                 if(!is_integer($i)) { continue; }
-                array_push($result, array_map(function($a) { return $a[0]; }, Set::getMapped($r, $prop_map)));
+                array_push($result, array_map(function($a) { return $a[0]; }, Set::reassignKeys(Set::select($r, array_keys($prop_map)), $prop_map)));
             }
         } else {
             throw new Exception('Unable to connect to LDAP server: '+ldap_error($ds));
