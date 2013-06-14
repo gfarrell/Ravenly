@@ -143,37 +143,38 @@ class Ravenly {
 
         static $user;
 
-        // first try checking the session for user data
-        $sesh_user = Session::get('Ravenly.user');
-        if(!is_null($sesh_user)) {
-            Log::info('Ravenly: - User found in session, retrieving.');
-            $user = $sesh_user;
-        }
-
         if(is_null($user)) {
-            Log::info('Ravenly: - user not previously set, creating.');
-            $class = Config::get('ravenly::auth.model') or 'Models\RavenUser';
-            $crsid = Session::get('ucam_webauth_crsid');
-            
-            // Now we see if we should create a new user, or fetch an old one
-            $exists = call_user_func($class.'::where_crsid', $crsid)->count() > 0;
-            if(!$exists) {
-                Log::info('Ravenly: - user not in database, creating new object.');
-                $user = new $class(array('crsid'=>$crsid), false);
-
-                if(Config::get('ravenly::auth.autocreate')) {
-                    Log::info('Ravenly: - autocreate set, so saving user.');
-                    $user->save();
-                }
+            // First check session
+            $sesh_user = Session::get('Ravenly.user');
+            if(!is_null($sesh_user)) {
+                Log::info('Ravenly: - User found in session, retrieving.');
+                $user = $sesh_user;
             } else {
-                Log::info('Ravenly: - user exists in database, retrieving.');
-                $user = call_user_func($class.'::where_crsid', $crsid)->first();
+            // Otherwise just fetch/create
+                Log::info('Ravenly: - user not previously set, creating.');
+                $class = Config::get('ravenly::auth.model') or 'Models\RavenUser';
+                $crsid = Session::get('ucam_webauth_crsid');
+                
+                // Now we see if we should create a new user, or fetch an old one
+                $exists = call_user_func($class.'::where_crsid', $crsid)->count() > 0;
+                if(!$exists) {
+                    Log::info('Ravenly: - user not in database, creating new object.');
+                    $user = new $class(array('crsid'=>$crsid), false);
+
+                    if(Config::get('ravenly::auth.autocreate')) {
+                        Log::info('Ravenly: - autocreate set, so saving user.');
+                        $user->save();
+                    }
+                } else {
+                    Log::info('Ravenly: - user exists in database, retrieving.');
+                    $user = call_user_func($class.'::where_crsid', $crsid)->first();
+                }
+
+                Log::info('Ravenly: - fetching user details from LDAP.');
+                $user->fillFromLookup();
+
+                Session::put('Ravenly.user', $user);
             }
-
-            Log::info('Ravenly: - fetching user details from LDAP.');
-            $user->fillFromLookup();
-
-            Session::put('Ravenly.user', $user);
         }
         
         return $user;
