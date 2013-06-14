@@ -89,7 +89,7 @@ class Ravenly {
         $status = true;
 
         // If no user, then fail auth
-        if(!$user) $status = false;
+        if(!$user || !Ravenly::loggedIn()) $status = false;
 
         // Get auth conditions
         $c = Config::get('ravenly::auth.conditions');
