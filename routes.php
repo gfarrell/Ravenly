@@ -1,11 +1,22 @@
 <?php
-Route::filter('raven', function($conditions = array()) {
+namespace Ravenly;
+
+use Route;
+use Log;
+
+/**
+ * Raven login filter.
+ * Requires Raven Login and authenticates against default conditions.
+ *
+ * e.g. $this->filter('before', 'raven');
+ */
+Route::filter('raven', function() {
     Log::info('Ravenly: raven filter initiated.');
-    if(Ravenly\Ravenly::loggedIn()) {
+    if(Ravenly::loggedIn()) {
         Log::info('Ravenly: - user already logged in, authenticating.');
     } else {
         Log::info('Ravenly: - user not logged in, logging in.');
-        $l_status = Ravenly\Ravenly::login();
+        $l_status = Ravenly::login();
 
         if(!is_bool($l_status)) {
             return $l_status;
@@ -16,7 +27,7 @@ Route::filter('raven', function($conditions = array()) {
         }
     }
 
-    $status = Ravenly\Ravenly::authenticate(Ravenly\Ravenly::user(), $conditions);
+    $status = Ravenly::authenticate(Ravenly::user());
 
     if($status === false) {
         Log::info('Ravenly: [!] not authorised.');
