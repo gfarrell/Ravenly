@@ -3,8 +3,9 @@ namespace Ravenly\Models;
 
 use Eloquent;
 use PhpLib\Set;
+use Lib\LDAP;
 
-class RavenUser extends Eloquent{
+class User extends Eloquent{
     public static $table = 'users';
 
     /* --- Instance Methods --- */
@@ -34,7 +35,7 @@ class RavenUser extends Eloquent{
      * @return void
      */
     public function fillFromLookup() {
-        $lookup = RavenUser::lookup($this->crsid);
+        $lookup = User::lookup($this->crsid);
         if(is_array($lookup)) {
             foreach($lookup as $field => $value) {
                 $this->$field = $value;
@@ -50,7 +51,7 @@ class RavenUser extends Eloquent{
      * @return array         user properties from ldap
      */
     public static function lookup($crsid) {
-        $u = \Ravenly\Lib\LDAP::search($crsid, 'uid');
+        $u = LDAP::search($crsid, 'uid');
         return count($u) > 0 ? $u[0] : null;
     }
 }
