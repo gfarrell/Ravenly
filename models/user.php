@@ -3,7 +3,7 @@ namespace Ravenly\Models;
 
 use Eloquent;
 use PhpLib\Set;
-use Lib\LDAP;
+use Ravenly\Lib\LDAP;
 
 class User extends Eloquent{
     public static $table = 'users';
@@ -15,7 +15,7 @@ class User extends Eloquent{
      * @return Relationship the users groups
      */
     public function groups() {
-        return $this->has_many_and_belongs_to('UserGroup', 'user_usergroup', 'user_id');
+        return $this->has_many_and_belongs_to('Ravenly\Models\UserGroup', 'user_usergroup', 'user_id');
     }
 
     /**
