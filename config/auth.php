@@ -16,7 +16,7 @@ return array(
     ),
 
     // What model class to use
-    'model'             =>  '\Ravenly\Models\RavenUser',
+    'model'             =>  '\Ravenly\Models\User',
 
     // Automatically create a new User if one isn't found?
     'autocreate'        =>  false

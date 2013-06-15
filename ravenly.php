@@ -79,7 +79,7 @@ class Ravenly {
 
     /**
      * Authenticates the user according to a defined ruleset.
-     * @param  RavenUser $user       the user
+     * @param  User $user       the user
      * @param  array  $conditions [description]
      * @return [type]             [description]
      */
@@ -152,7 +152,7 @@ class Ravenly {
             } else {
             // Otherwise just fetch/create
                 Log::info('Ravenly: - user not previously set, creating.');
-                $class = Config::get('ravenly::auth.model') or 'Models\RavenUser';
+                $class = Config::get('ravenly::auth.model') or 'Models\User';
                 $crsid = Session::get('ucam_webauth_crsid');
                 
                 // Now we see if we should create a new user, or fetch an old one
