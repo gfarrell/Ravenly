@@ -28,8 +28,8 @@ class Ravenly {
             Log::info('Ravenly: - Instantiating Ucam_Webauth object.');
             $webauth = new UcamWebauth(array(
                 'key_dir'       => Bundle::path('ravenly').'keys',
-                'cookie_key'    => 'Ravenly_Cookie',
-                'cookie_name'   => 'Ravenly_Cookie',
+                'cookie_key'    => 'Ravenly.UcamWebauth',
+                'cookie_name'   => 'Ravenly.UcamWebauth',
                 'hostname'      => $_SERVER['HTTP_HOST']
             ));
         }
@@ -45,7 +45,7 @@ class Ravenly {
             if($webauth->success()) {
                 Log::info('Ravenly: - webauth authentication successful.');
                 Ravenly::setLoggedIn(true);
-                Session::put('ucam_webauth_crsid', $webauth->principal());
+                Session::put('Ravenly.crsid', $webauth->principal());
             } else {
                 throw new AuthException('Raven authentication not completed: ' . $webauth->status() . ' ' . $webauth->msg());
             }
@@ -83,10 +83,13 @@ class Ravenly {
     }
 
     /**
-     * Triggers the logout process, purges Cookies.
+     * Triggers the logout process, purges Cookies and session.
      */
     public static function logout() {
-
+        Session::forget('Ravenly.user');
+        Session::forget('Ravenly.crsid');
+        Cookie::forget('Ravenly.UcamWebauth');
+        Cookie::forget('ravenly');
     }
 
     /**
@@ -165,7 +168,7 @@ class Ravenly {
             // Otherwise just fetch/create
                 Log::info('Ravenly: - user not previously set, creating.');
                 $class = Config::get('ravenly::auth.model') or 'Models\User';
-                $crsid = Session::get('ucam_webauth_crsid');
+                $crsid = Session::get('Ravenly.crsid');
                 
                 // Now we see if we should create a new user, or fetch an old one
                 $exists = call_user_func($class.'::where_crsid', $crsid)->count() > 0;
