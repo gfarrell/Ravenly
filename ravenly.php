@@ -59,7 +59,19 @@ class Ravenly {
      * @return boolean if the user is logged in or not.
      */
     public static function loggedIn() {
-        return Ravenly::$logged_in;
+        $li = Ravenly::$logged_in;
+
+        if($li) {
+            return true;
+        } else {
+            $sesh_user = Session::get('Ravenly.user');
+            if(!is_null($sesh_user)) {
+                Ravenly::setLoggedIn(true);
+            }
+            return true;
+        }
+
+        return false;
     }
 
     /**
