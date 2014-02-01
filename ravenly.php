@@ -28,8 +28,8 @@ class Ravenly {
             Log::info('Ravenly: - Instantiating Ucam_Webauth object.');
             $webauth = new UcamWebauth(array(
                 'key_dir'       => Bundle::path('ravenly').'keys',
-                'cookie_key'    => 'Ravenly.UcamWebauth',
-                'cookie_name'   => 'Ravenly.UcamWebauth',
+                'cookie_key'    => 'ravenly-ucamwebauth',
+                'cookie_name'   => 'ravenly-ucamwebauth',
                 'hostname'      => $_SERVER['HTTP_HOST']
             ));
         }
