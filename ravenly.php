@@ -65,7 +65,7 @@ class Ravenly {
             return true;
         } else {
             $sesh_user = Session::get('Ravenly.user');
-            if(!is_null($sesh_user) && !is_null($sesh_user->crsid)) {
+            if(Ravenly::isValidUser($sesh_user)) {
                 Ravenly::setLoggedIn(true);
                 return true;
             }
@@ -169,7 +169,7 @@ class Ravenly {
         if(is_null($user)) {
             // First check session
             $sesh_user = Session::get('Ravenly.user');
-            if(!is_null($sesh_user)) {
+            if(Ravenly::isValidUser($sesh_user)) {
                 Log::info('Ravenly: - User found in session, retrieving.');
                 $user = $sesh_user;
             } else {
@@ -201,6 +201,10 @@ class Ravenly {
         }
         
         return $user;
+    }
+
+    public static function isValidUser($user) {
+        return !is_null($user) && !is_null($user->crsid);
     }
 }
 ?>
