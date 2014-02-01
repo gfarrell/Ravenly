@@ -65,10 +65,10 @@ class Ravenly {
             return true;
         } else {
             $sesh_user = Session::get('Ravenly.user');
-            if(!is_null($sesh_user)) {
+            if(!is_null($sesh_user) && !is_null($sesh_user->crsid)) {
                 Ravenly::setLoggedIn(true);
+                return true;
             }
-            return true;
         }
 
         return false;
