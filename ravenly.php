@@ -118,6 +118,8 @@ class Ravenly {
             if(!in_array($user->crsid, $c['crsid'])) {
                 Log::info('Ravenly: ! failed crsid condition.');
                 $status = false;
+            } else {
+                Log::info('Ravenly: fulfilled crsid condition.');
             }
         }
 
@@ -126,6 +128,8 @@ class Ravenly {
             if(!in_array($user->collegecode, $c['collegecode'])) {
                 Log::info('Ravenly: ! failed college condition.');
                 $status = false;
+            } else {
+                Log::info('Ravenly: fulfilled college condition.');
             }
         }
 
@@ -134,6 +138,8 @@ class Ravenly {
             if(!$user->exists && $c['force_db']) {
                 Log::info('Ravenly: ! failed force_db condition.');
                 $status = false;
+            } else {
+                Log::info('Ravenly: fulfilled force_db condition.');
             }
         }
 
@@ -142,6 +148,8 @@ class Ravenly {
             if(!$user->inGroup($c['group'])) {
                 Log::info('Ravenly: ! failed group condition.');
                 $status = false;
+            } else {
+                Log::info('Ravenly: fulfilled group condition.');
             }
         }
 
