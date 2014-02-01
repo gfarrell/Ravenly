@@ -403,7 +403,7 @@ class UcamWebauth {
     // log a warning if being used to authenticate POST requests
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-      Log::write('error', 'UcamWebauth: PHP Agent invoked for POST request, which it does\'nt really support');
+      Log::write('error', 'UcamWebauth: PHP Agent invoked for POST request, which it doesn\'t really support');
     }
 
     // Check that the hostname is set explicitly (since we cannot trust
@@ -575,7 +575,6 @@ class UcamWebauth {
       // a redirect loop.
       
       if (is_null(Cookie::get($this->full_cookie_name())) or Cookie::get($this->full_cookie_name()) != $this->TESTSTRING) {
-        
         $this->session_ticket[$this->SESSION_TICKET_STATUS] = '610';
         $this->session_ticket[$this->SESSION_TICKET_MSG] = 'Browser is not accepting session cookie';
         return TRUE;
